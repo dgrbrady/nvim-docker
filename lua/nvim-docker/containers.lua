@@ -14,7 +14,7 @@ local function render_containers(containers)
     local function render(p)
         local old_nodes = state.tree:get_nodes()
         tree.create_tree(p)
-        for index, container in ipairs(containers) do
+        for _, container in ipairs(containers) do
             local text = ''
             if string.find(container.status, 'Up') then
                 text = container.name .. ' 🟢'
@@ -33,7 +33,7 @@ local function render_containers(containers)
             state.tree:add_node(node)
 
             -- if the node was expanded before it was cleared, expand it again
-            for index, old_node in ipairs(old_nodes) do
+            for _, old_node in ipairs(old_nodes) do
                 if old_node.container.id == node.container.id then
                     if old_node:is_expanded() then
                         node:expand()
@@ -66,7 +66,7 @@ local function get_containers()
     }):sync()
 
     if result ~= nil then
-        for index, value in ipairs(result) do
+        for _, value in ipairs(result) do
             if value ~= nil then
                 local container = vim.json.decode(value)
                 table.insert(containers, container)
@@ -85,11 +85,9 @@ function _M.list_containers()
     end
 
     -- background refresh the tree every 5000ms
-    state.timer:start(5000, 5000, vim.schedule_wrap(function ()
-        if state.timer_stopped == false then
-            local containers = get_containers()
-            render_containers(containers)
-        end
+    state.timer:start(1000, 5000, vim.schedule_wrap(function ()
+        local containers = get_containers()
+        render_containers(containers)
     end))
 end
 
