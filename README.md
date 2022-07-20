@@ -12,6 +12,7 @@ Docker management right inside Neovim!
   - Remove and rebuild containers (Soon <sup>TM</sup>)
   - Send commands to containers (Soon<sup>TM</sup>)
   - View container logs (Soon<sup>TM</sup>)
+- Configurable (Soon<sup>TM</sup>)
 - Docker compose integration (Soon<sup>TM</sup>)
 - Image management
   - View images on you local machine with live reloading (Soon<sup>TM</sup>)
@@ -51,6 +52,10 @@ Once the popup is launched, use `<j>` and `<k>` keys to move up and down. `<l>` 
 - [ ] Interact with images
   - [ ] List image
   - [ ] Delete image
+  - [ ] Create container from image
+- [ ] Docker compose integration
+- [ ] Provide options for user configuration
+- [ ] Documentation
 
 ## Development
 
