@@ -1,5 +1,5 @@
 local NuiTree = require('nui.tree')
-local keymaps = require('nvim-docker.popup-keymaps')
+local keymaps = require('popup-keymaps')
 local _M = {}
 
 function _M.get_expanded_nodes(tree)
