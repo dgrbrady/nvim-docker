@@ -13,7 +13,7 @@ local popup_bottom_text = '<l>: Expand, <L>: Expand All, <h>: Collapse, <H>: Col
 local function render_containers(containers)
     local function render(p)
         local old_nodes = state.tree:get_nodes()
-        tree.create_tree(p.winid)
+        tree.create_tree(p)
         for index, container in ipairs(containers) do
             local text = ''
             if string.find(container.status, 'Up') then
@@ -46,7 +46,6 @@ local function render_containers(containers)
 
     if state.popup == nil then
         popup.create_popup(popup_top_text, popup_bottom_text, function (p)
-            print(vim.pretty_print(p))
             render(p)
         end)
     else

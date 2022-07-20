@@ -40,8 +40,7 @@ function _M.create_popup(top_text, bottom_text, cb)
         state.timer:close()
     end)
 
-    tree.create_tree(popup.winid)
-    keymaps.create_keymaps(popup, state.tree)
+    tree.create_tree(popup)
     state.popup = popup
     cb(popup)
 end
