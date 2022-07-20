@@ -12,7 +12,7 @@ local function render_tree(container_data)
         return
     end
     local old_nodes = tree.tree:get_nodes()
-    tree.tree:set_nodes({})
+    tree.tree.create_tree()
     for index, value in ipairs(container_data) do
         if value ~= nil then
             local container = vim.json.decode(value)
@@ -52,6 +52,7 @@ function _M.list_containers()
             'Docker Containers',
             '<l>: Expand, <L>: Expand All, <h>: Collapse, <H>: Collapse All, <u>: Container UP, <d>: Container DOWN, <q>: Quit'
         )
+        tree.create_tree()
         popup.create_keymaps()
     end
     local result = Job:new({
