@@ -30,20 +30,24 @@ function _M.create_popup(top_text, bottom_text, cb)
 
     popup:mount()
 
+    local timer = vim.loop.new_timer()
+
     -- unmount component when cursor leaves buffer
     popup:on(event.BufLeave, function()
         state.popup = nil
         state.tree = nil
         local function unmount()
+            timer:close()
             popup:unmount()
-            state.timer:close()
         end
         pcall(unmount)
     end)
 
     tree.create_tree(popup)
     state.popup = popup
-    cb(popup)
+
+    -- background refresh the tree every 5000ms
+    timer:start(1000, 5000, vim.schedule_wrap(cb))
 end
 
 return _M

@@ -10,6 +10,29 @@ local _M = {}
 local popup_top_text = 'Docker Containers'
 local popup_bottom_text = '<l>: Expand, <L>: Expand All, <h>: Collapse, <H>: Collapse All, <u>: Container UP, <d>: Container DOWN'
 
+local function get_containers()
+    local containers = {}
+    local result = Job:new({
+        command = 'docker',
+        args = {
+            'container',
+            'ls',
+            '-a',
+            '--format={"id": {{json .ID}}, "name": {{json .Names}}, "image": {{json .Image}}, "command": {{json .Command}}, "status": {{json .Status}}, "networks": {{json .Networks}}, "ports": {{json .Ports}}}'
+        },
+    }):sync()
+
+    if result ~= nil then
+        for _, value in ipairs(result) do
+            if value ~= nil then
+                local container = vim.json.decode(value)
+                table.insert(containers, container)
+            end
+        end
+    end
+    return containers
+end
+
 local function render_containers(containers)
     local function render(p)
         local old_nodes = state.tree:get_nodes()
@@ -53,28 +76,7 @@ local function render_containers(containers)
     end
 end
 
-local function get_containers()
-    local containers = {}
-    local result = Job:new({
-        command = 'docker',
-        args = {
-            'container',
-            'ls',
-            '-a',
-            '--format={"id": {{json .ID}}, "name": {{json .Names}}, "image": {{json .Image}}, "command": {{json .Command}}, "status": {{json .Status}}, "networks": {{json .Networks}}, "ports": {{json .Ports}}}'
-        },
-    }):sync()
 
-    if result ~= nil then
-        for _, value in ipairs(result) do
-            if value ~= nil then
-                local container = vim.json.decode(value)
-                table.insert(containers, container)
-            end
-        end
-    end
-    return containers
-end
 
 function _M.list_containers()
     if state.popup == nil then
@@ -83,12 +85,6 @@ function _M.list_containers()
             render_containers(containers)
         end)
     end
-
-    -- background refresh the tree every 5000ms
-    state.timer:start(1000, 5000, vim.schedule_wrap(function ()
-        local containers = get_containers()
-        render_containers(containers)
-    end))
 end
 
 return _M
