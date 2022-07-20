@@ -4,7 +4,9 @@ Docker management right inside Neovim!
 
 ## Features
 
-![Screenshare-2022-07-20-2_21_14-PM](https://user-images.githubusercontent.com/38011308/180087158-6581aa26-e5cb-49ad-a323-03d7e05bd601.gif)
+
+![Screenshare - 2022-07-20 5_59_58 PM (1)](https://user-images.githubusercontent.com/38011308/180091781-a23adf85-a159-4caa-b2a9-4abe021a1ff4.gif)
+
 
 - Container management
   - View containers on your local machine with live reloading
