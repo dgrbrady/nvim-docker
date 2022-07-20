@@ -10,7 +10,7 @@ local tree = require('nvim-docker.tree')
 local event = require('nui.utils.autocmd').event
 local _M = {}
 
-function _M.create_popup(top_text, bottom_text)
+function _M.create_popup(top_text, bottom_text, cb)
     local popup = Popup({
         enter = true,
         focusable = true,
@@ -41,6 +41,7 @@ function _M.create_popup(top_text, bottom_text)
     tree.create_tree(popup.winid)
     keymaps.create_keymaps(popup, state.tree)
     state.popup = popup
+    cb(popup)
 end
 
 return _M

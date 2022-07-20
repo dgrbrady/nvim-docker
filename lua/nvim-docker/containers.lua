@@ -12,6 +12,7 @@ local function render_tree(container_data, p)
         return
     end
     local old_nodes = state.tree:get_nodes()
+    print(vim.pretty_print(p))
     tree.create_tree(p.winid)
     for index, value in ipairs(container_data) do
         if value ~= nil then
@@ -65,10 +66,12 @@ function _M.list_containers()
     if state.popup == nil then
         popup.create_popup(
             'Docker Containers',
-            '<l>: Expand, <L>: Expand All, <h>: Collapse, <H>: Collapse All, <u>: Container UP, <d>: Container DOWN, <q>: Quit'
+            '<l>: Expand, <L>: Expand All, <h>: Collapse, <H>: Collapse All, <u>: Container UP, <d>: Container DOWN, <q>: Quit',
+            function (p)
+                get_containers(p)
+            end
         )
     end
-    get_containers(state.popup)
 
     -- background refresh the tree every 5000ms
     state.timer:start(1000, 5000, vim.schedule_wrap(function ()
