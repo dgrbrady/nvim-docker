@@ -29,9 +29,6 @@ function _M.create_popup(top_text, bottom_text)
         },
     })
 
-    -- mount/open the component
-    popup:mount()
-
     state.popup_exists = true
 
     -- unmount component when cursor leaves buffer
@@ -44,10 +41,9 @@ function _M.create_popup(top_text, bottom_text)
         state.timer:close()
     end)
 
-    
     tree.create_tree(popup.winid)
     keymaps.create_keymaps(popup)
-    return popup
+    state.popup = popup
 end
 
 return _M
