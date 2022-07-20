@@ -46,12 +46,8 @@ local function render_tree(container_data, p)
     tree.tree:render()
 end
 
-local p = popup.create_popup(
-    'Docker Containers',
-    '<l>: Expand, <L>: Expand All, <h>: Collapse, <H>: Collapse All, <u>: Container UP, <d>: Container DOWN, <q>: Quit'
-)
-
 function _M.list_containers()
+    local p
     if state.popup_exists == false then
         p = popup.create_popup(
             'Docker Containers',
