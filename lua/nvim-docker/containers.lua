@@ -8,7 +8,7 @@ local Job = require('plenary.job')
 local _M = {}
 
 local popup_top_text = 'Docker Containers'
-local popup_bottom_text = '<l>: Expand, <L>: Expand All, <h>: Collapse, <H>: Collapse All, <u>: Container UP, <d>: Container DOWN, <q>: Quit'
+local popup_bottom_text = '<l>: Expand, <L>: Expand All, <h>: Collapse, <H>: Collapse All, <u>: Container UP, <d>: Container DOWN'
 
 local function render_containers(containers)
     local function render(p)

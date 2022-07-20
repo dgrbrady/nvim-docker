@@ -51,9 +51,9 @@ function _M.create_keymaps(popup, tree_instance, tree_mod)
     --     container_down(node)
     -- end)
 
-    popup:map('n', 'q', function ()
-        popup:unmount()
-    end)
+    -- popup:map('n', 'q', function ()
+    --     popup:unmount()
+    -- end)
 end
 
 return _M

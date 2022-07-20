@@ -26,13 +26,13 @@ function _M.get_expanded_nodes(tree)
 end
 
 function _M.collapse_all_nodes(tree)
-  local expanded = _M.get_expanded_nodes(tree)
-  for _, expanded_node in ipairs(expanded) do
-    local id = expanded_node:get_id()
-    local node = tree:get_node(id)
+  local nodes = tree:get_nodes()
+  for _, node in ipairs(nodes) do
+    local id = node:get_id()
     node:collapse(id)
   end
   tree:render()
+
   -- If you want to expand the root
   -- local root = tree:get_nodes()[1]
   -- root:expand()
@@ -42,7 +42,6 @@ function _M.expand_all_nodes(tree)
   local nodes = tree:get_nodes()
   for _, node in ipairs(nodes) do
     local id = node:get_id()
-    -- local node = tree:get_node(id)
     node:expand(id)
   end
   tree:render()
