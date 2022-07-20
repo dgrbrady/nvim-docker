@@ -1,4 +1,4 @@
-local tree = require('nvim-docker.tree')
+local tree = require('tree')
 
 local _M = {}
 
