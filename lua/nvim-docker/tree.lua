@@ -52,7 +52,7 @@ function _M.expand_all_nodes(tree)
 end
 
 function _M.create_tree()
-    if state.popup == nil then
+    if state.popup.winid == nil then
       popup.create_popup()
     end
     local tree = NuiTree({ winid = state.popup.winid })
