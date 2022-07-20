@@ -67,7 +67,7 @@ local function get_containers()
     }):sync()
 
     if result ~= nil then
-        for index, value in ipairs(container_data) do
+        for index, value in ipairs(result) do
             if value ~= nil then
                 local container = vim.json.decode(value)
                 table.insert(containers, container)
