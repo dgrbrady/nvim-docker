@@ -11,7 +11,7 @@ local function render_tree(container_data, p)
     if container_data == nil then
         return
     end
-    local old_nodes = tree.tree:get_nodes()
+    local old_nodes = state.tree:get_nodes()
     tree.create_tree(p.winid)
     for index, value in ipairs(container_data) do
         if value ~= nil then
