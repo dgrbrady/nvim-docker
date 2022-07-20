@@ -1,6 +1,4 @@
 local NuiTree = require('nui.tree')
-local popup = require('popup')
-local state = require('nvim-docker.popup-state')
 local _M = {}
 
 function _M.get_expanded_nodes(tree)
@@ -51,11 +49,8 @@ function _M.expand_all_nodes(tree)
   -- root:expand()
 end
 
-function _M.create_tree()
-    if state.popup.winid == nil then
-      popup.create_popup()
-    end
-    local tree = NuiTree({ winid = state.popup.winid })
+function _M.create_tree(winid)
+    local tree = NuiTree({ winid = winid })
     _M.tree = tree
 end
 

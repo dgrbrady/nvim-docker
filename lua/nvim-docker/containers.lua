@@ -7,12 +7,12 @@ local Job = require('plenary.job')
 
 local _M = {}
 
-local function render_tree(container_data)
+local function render_tree(container_data, p)
     if container_data == nil then
         return
     end
     local old_nodes = tree.tree:get_nodes()
-    tree.create_tree()
+    tree.create_tree(p)
     for index, value in ipairs(container_data) do
         if value ~= nil then
             local container = vim.json.decode(value)
@@ -46,14 +46,17 @@ local function render_tree(container_data)
     tree.tree:render()
 end
 
+local p = popup.create_popup(
+    'Docker Containers',
+    '<l>: Expand, <L>: Expand All, <h>: Collapse, <H>: Collapse All, <u>: Container UP, <d>: Container DOWN, <q>: Quit'
+)
+
 function _M.list_containers()
-    if state.popup == nil then
-        popup.create_popup(
+    if state.popup_exists == false then
+        p = popup.create_popup(
             'Docker Containers',
             '<l>: Expand, <L>: Expand All, <h>: Collapse, <H>: Collapse All, <u>: Container UP, <d>: Container DOWN, <q>: Quit'
         )
-        tree.create_tree()
-        popup.create_keymaps()
     end
     local result = Job:new({
         command = 'docker',
@@ -65,7 +68,7 @@ function _M.list_containers()
         },
     }):sync()
     if result ~= nil then
-        render_tree(result)
+        render_tree(result, p)
     end
 
     -- background refresh the tree every 5000ms
