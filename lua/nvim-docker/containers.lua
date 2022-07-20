@@ -12,7 +12,7 @@ local function render_tree(container_data)
         return
     end
     local old_nodes = tree.tree:get_nodes()
-    tree.tree.create_tree()
+    tree.create_tree()
     for index, value in ipairs(container_data) do
         if value ~= nil then
             local container = vim.json.decode(value)
