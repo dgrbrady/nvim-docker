@@ -34,6 +34,8 @@ function _M.create_popup(top_text, bottom_text, cb)
     -- unmount component when cursor leaves buffer
     popup:on(event.BufLeave, function()
         popup:unmount()
+        state.popup = nil
+        state.tree = nil
         state.timer_stopped = true
         state.timer:close()
     end)
