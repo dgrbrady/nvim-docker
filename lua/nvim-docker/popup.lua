@@ -34,13 +34,12 @@ function _M.create_popup(top_text, bottom_text)
     -- unmount component when cursor leaves buffer
     popup:on(event.BufLeave, function()
         popup:unmount()
-        state.popup_exists = false
         state.timer_stopped = true
         state.timer:close()
     end)
 
     tree.create_tree(popup.winid)
-    keymaps.create_keymaps(popup)
+    keymaps.create_keymaps(popup, state.tree)
     state.popup = popup
 end
 

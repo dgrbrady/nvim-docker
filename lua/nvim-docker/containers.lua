@@ -12,7 +12,7 @@ local function render_tree(container_data, p)
         return
     end
     local old_nodes = tree.tree:get_nodes()
-    tree.tree:set_nodes({})
+    tree.create_tree(p.winid)
     for index, value in ipairs(container_data) do
         if value ~= nil then
             local container = vim.json.decode(value)
@@ -31,7 +31,7 @@ local function render_tree(container_data, p)
                 NuiTree.Node({ text = '[Networks] ' .. container.networks }),
                 NuiTree.Node({ text = '[Ports] ' .. container.ports }),
             })
-            tree.tree:add_node(node)
+            state.tree:add_node(node)
 
             -- if the node was expanded before it was cleared, expand it again
             for index, old_node in ipairs(old_nodes) do
@@ -43,7 +43,7 @@ local function render_tree(container_data, p)
             end
         end
     end
-    tree.tree:render()
+    state.tree:render()
 end
 
 local function get_containers(p)
@@ -77,7 +77,6 @@ function _M.list_containers()
             get_containers(p)
         end
     end))
-
 end
 
 return _M
