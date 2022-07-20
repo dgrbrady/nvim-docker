@@ -22,6 +22,10 @@ Docker management right inside Neovim!
   
 ## Installation
 
+### Prerequisites
+
+This plugin uses plenary and nui.nvim, so make sure those are installed first!
+
 ### Packer
 
 `use 'dgrbrady/nvim-docker'`
