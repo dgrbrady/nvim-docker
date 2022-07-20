@@ -62,6 +62,7 @@ Once the popup is launched, use `<j>` and `<k>` keys to move up and down. `<l>` 
 - [ ] Docker compose integration
 - [ ] Provide options for user configuration
 - [ ] Documentation
+- [ ] Telescope integration?
 
 ## Development
 
