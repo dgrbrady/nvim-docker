@@ -22,6 +22,19 @@ In your lua config:
   vim.keymap.set('n', '<leader>C', nvim_docker.containers.list_containers)
 ```
 
+## Roadmap
+
+- [ ] Interact with containers
+  - [ ] Start container
+  - [ ] Stop container
+  - [ ] Restart container
+  - [ ] Delete container
+  - [ ] View logs from container
+  - [ ] Run command in container
+- [ ] Interact with images
+  - [ ] List image
+  - [ ] Delete image
+
 ## Development
 
 * clone the project `git clone https://github.com/dgrbrady/nvim-docker`

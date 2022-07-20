@@ -4,10 +4,6 @@ local tree = require('nvim-docker.tree')
 local _M = {}
 
 function _M.create_keymaps()
-    if tree.tree == nil then
-        tree.create_tree()
-    end
-
     local map_options = { remap = false, nowait = true }
 
     -- collapse
