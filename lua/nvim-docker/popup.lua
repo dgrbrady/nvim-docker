@@ -33,14 +33,14 @@ function _M.create_popup(top_text, bottom_text, cb)
 
     -- unmount component when cursor leaves buffer
     popup:on(event.BufLeave, function()
-        local function unmount()
-            popup:unmount()
-        end
-        pcall(unmount)
         state.popup = nil
         state.tree = nil
         state.timer_stopped = true
-        state.timer:close()
+        local function unmount()
+            popup:unmount()
+            state.timer:close()
+        end
+        pcall(unmount)
     end)
 
     tree.create_tree(popup)
