@@ -29,14 +29,12 @@ function _M.create_popup(top_text, bottom_text)
         },
     })
 
-    state.popup_exists = true
+    popup:mount()
 
     -- unmount component when cursor leaves buffer
     popup:on(event.BufLeave, function()
-        if state.popup_exists == true then
-            popup:unmount()
-            state.popup_exists = false
-        end
+        popup:unmount()
+        state.popup_exists = false
         state.timer_stopped = true
         state.timer:close()
     end)
