@@ -12,7 +12,7 @@ local function render_tree(container_data, p)
         return
     end
     local old_nodes = tree.tree:get_nodes()
-    tree.create_tree(p.winid)
+    -- tree.create_tree(p.winid)
     for index, value in ipairs(container_data) do
         if value ~= nil then
             local container = vim.json.decode(value)
@@ -46,14 +46,7 @@ local function render_tree(container_data, p)
     tree.tree:render()
 end
 
-function _M.list_containers()
-    local p
-    if state.popup_exists == false then
-        p = popup.create_popup(
-            'Docker Containers',
-            '<l>: Expand, <L>: Expand All, <h>: Collapse, <H>: Collapse All, <u>: Container UP, <d>: Container DOWN, <q>: Quit'
-        )
-    end
+local function get_containers(p)
     local result = Job:new({
         command = 'docker',
         args = {
@@ -66,11 +59,21 @@ function _M.list_containers()
     if result ~= nil then
         render_tree(result, p)
     end
+end
 
+function _M.list_containers()
+    local p
+    if state.popup_exists == false then
+        p = popup.create_popup(
+            'Docker Containers',
+            '<l>: Expand, <L>: Expand All, <h>: Collapse, <H>: Collapse All, <u>: Container UP, <d>: Container DOWN, <q>: Quit'
+        )
+    end
+    get_containers(p)
     -- background refresh the tree every 5000ms
     state.timer:start(1000, 5000, vim.schedule_wrap(function ()
         if state.timer_stopped == false then
-            _M.list_containers()
+            get_containers(p)
         end
     end))
 
