@@ -47,7 +47,7 @@ function _M.create_popup(top_text, bottom_text, cb)
     state.popup = popup
 
     -- background refresh the tree every 5000ms
-    timer:start(1000, 5000, vim.schedule_wrap(cb))
+    timer:start(0, 5000, vim.schedule_wrap(cb))
 end
 
 return _M
