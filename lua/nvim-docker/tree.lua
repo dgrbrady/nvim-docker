@@ -52,7 +52,7 @@ end
 
 function _M.create_tree(popup)
     local tree = NuiTree({ winid = popup.winid })
-    keymaps.create_keymaps(popup, tree)
+    keymaps.create_keymaps(popup, tree, _M)
 end
 
 return _M

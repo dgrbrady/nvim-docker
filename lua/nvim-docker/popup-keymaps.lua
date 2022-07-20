@@ -1,8 +1,6 @@
-local tree = require('tree')
-
 local _M = {}
 
-function _M.create_keymaps(popup, tree_instance)
+function _M.create_keymaps(popup, tree_instance, tree_mod)
     local map_options = { remap = false, nowait = true }
 
     -- collapse
@@ -19,7 +17,7 @@ function _M.create_keymaps(popup, tree_instance)
 
     -- collapse all
     popup:map('n', 'H', function ()
-        tree.collapse_all_nodes(tree_instance)
+        tree_mod.collapse_all_nodes(tree_instance)
     end, map_options)
 
     -- expand
@@ -40,7 +38,7 @@ function _M.create_keymaps(popup, tree_instance)
 
     -- expand all
     popup:map('n', 'L', function ()
-        tree.expand_all_nodes(tree_instance)
+        tree_mod.expand_all_nodes(tree_instance)
     end, map_options)
 
     -- popup:map('n', 'u', function ()
