@@ -18,7 +18,7 @@ local function create_popup(config)
             text = {
                 top = config.top_text,
                 top_align = 'center',
-                bottom = '<l>: Expand, <L>: Expand All, <h>: Collapse, <H>: Collapse All, <?>: Toggle Help'
+                bottom = '<l>: Expand, <L>: Expand All, <h>: Collapse, <H>: Collapse All'
             },
         },
         position = '50%',
