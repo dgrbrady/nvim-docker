@@ -1,7 +1,46 @@
+local Popup = require('nui.popup')
+local event = require('nui.utils.autocmd').event
 local _M = {}
 
-function _M.create_keymaps(popup, tree_instance, tree_mod)
+-- local help_popup = Popup({
+--     enter = true,
+--     focusable = true,
+--     border = {
+--         style = 'rounded',
+--         text = {
+--             top = 'Help',
+--             top_align = 'center',
+--         },
+--     },
+--     position = '50%',
+--     size = {
+--         width = '40%',
+--         height = '60%',
+--     },
+-- })
+
+function _M.create_keymaps(popup, config, state, tree_instance, tree_mod)
     local map_options = { remap = false, nowait = true }
+
+    -- help_popup:map('n', '?', function ()
+    --     help_popup:unmount()
+    --     popup:update_layout({
+    --         position = '50%',
+    --         size = {
+    --             width = '80%',
+    --             height = '60%',
+    --         },
+    --     })
+    --     popup:on(event.BufLeave, function()
+    --         state.popup = nil
+    --         state.tree = nil
+    --         local function unmount()
+    --             state.popup_timer:close()
+    --             popup:unmount()
+    --         end
+    --         pcall(unmount)
+    --     end)
+    -- end)
 
     -- collapse
     popup:map('n', 'h', function()
@@ -41,19 +80,37 @@ function _M.create_keymaps(popup, tree_instance, tree_mod)
         tree_mod.expand_all_nodes(tree_instance)
     end, map_options)
 
-    -- popup:map('n', 'u', function ()
-    --     local node = tree_instance:get_node()
-    --     container_up(node)
-    -- end)
-    --
-    -- popup:map('n', 'd', function ()
-    --     local node = tree_instance:get_node()
-    --     container_down(node)
+    -- popup:map('n', '?', function ()
+    --     -- if help_opened == nil then
+    --         popup:off(event.BufLeave)
+    --         popup:update_layout({
+    --             size = {
+    --                 width = '30%',
+    --                 height = '60%'
+    --             },
+    --             position = {
+    --                 row = '50%',
+    --                 col = '0%'
+    --             }
+    --         })
+    --         help_popup:mount()
+    --         if config.extra_keymaps ~= nil then
+    --             for index, keymap in ipairs(config.extra_keymaps) do
+    --                 vim.api.nvim_buf_set_lines(help_popup.bufnr, index, index + 1, false, {'[Key]: ' .. keymap[2] .. '      ' .. keymap[4]})
+    --             end
+    --         end
     -- end)
 
-    -- popup:map('n', 'q', function ()
-    --     popup:unmount()
-    -- end)
+    if config.extra_keymaps ~= nil then
+        for _, keymap in ipairs(config.extra_keymaps) do
+            popup:map(
+                keymap[1],
+                keymap[2],
+                keymap[3],
+                map_options
+            )
+        end
+    end
 end
 
 return _M

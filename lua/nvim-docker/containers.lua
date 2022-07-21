@@ -9,6 +9,7 @@ local _M = {}
 
 local popup_top_text = 'Docker Containers'
 local popup_bottom_text = '<l>: Expand, <L>: Expand All, <h>: Collapse, <H>: Collapse All, <u>: Container UP, <d>: Container DOWN'
+local extra_keymaps = require('nvim-docker.container-keymaps').extra_keymaps
 
 local function get_containers()
     local containers = {}
@@ -36,7 +37,11 @@ end
 local function render_containers(containers)
     local function render(p)
         local old_nodes = state.tree:get_nodes()
-        tree.create_tree(p)
+        tree.create_tree(p, {
+            top_text = popup_top_text,
+            extra_keymaps = extra_keymaps,
+            render = function (pop) render(pop) end
+        })
         for _, container in ipairs(containers) do
             local text = ''
             if string.find(container.status, 'Up') then
@@ -68,9 +73,11 @@ local function render_containers(containers)
     end
 
     if state.popup == nil then
-        popup.create_popup(popup_top_text, popup_bottom_text, function (p)
-            render(p)
-        end)
+        popup.create_popup({
+            top_text = popup_top_text,
+            extra_keymaps = extra_keymaps,
+            render = function (p) render(p) end
+        })
     else
         render(state.popup)
     end
@@ -80,10 +87,22 @@ end
 
 function _M.list_containers()
     if state.popup == nil then
-        popup.create_popup(popup_top_text, popup_bottom_text, function ()
-            local containers = get_containers()
-            render_containers(containers)
-        end)
+        popup.create_popup({
+            top_text = popup_top_text,
+            extra_keymaps = extra_keymaps,
+            render = function ()
+                local containers = get_containers()
+                render_containers(containers)
+            end
+        })
+        -- popup.create_popup(
+        --     popup_top_text,
+        --     extra_keymaps,
+        --     function ()
+        --         local containers = get_containers()
+        --         render_containers(containers)
+        --     end
+        -- )
     end
 end
 
