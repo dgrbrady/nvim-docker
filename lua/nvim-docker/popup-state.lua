@@ -1,4 +1,4 @@
 local _M = {
-  -- timer = vim.loop.new_timer(),
+  extra_popups = {}
 }
 return _M
