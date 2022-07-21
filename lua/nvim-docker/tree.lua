@@ -50,10 +50,10 @@ function _M.expand_all_nodes(tree)
   -- root:expand()
 end
 
-function _M.create_tree(popup)
+function _M.create_tree(popup, config, local_state)
     local tree = NuiTree({ winid = popup.winid })
-    keymaps.create_keymaps(popup, tree, _M)
     state.tree = tree
+    keymaps.create_keymaps(popup, config, local_state, tree, _M)
 end
 
 return _M

@@ -9,16 +9,16 @@ local tree = require('nvim-docker.tree')
 local event = require('nui.utils.autocmd').event
 local _M = {}
 
-function _M.create_popup(top_text, bottom_text, cb)
-    local popup = Popup({
+local function create_popup(config)
+     local popup = Popup({
         enter = true,
         focusable = true,
         border = {
             style = 'rounded',
             text = {
-                top = top_text,
+                top = config.top_text,
                 top_align = 'center',
-                bottom = bottom_text
+                bottom = '<l>: Expand, <L>: Expand All, <h>: Collapse, <H>: Collapse All'
             },
         },
         position = '50%',
@@ -43,11 +43,15 @@ function _M.create_popup(top_text, bottom_text, cb)
         pcall(unmount)
     end)
 
-    tree.create_tree(popup)
+    tree.create_tree(popup, config, state)
+
     state.popup = popup
 
     -- background refresh the tree every 5000ms
-    timer:start(0, 5000, vim.schedule_wrap(cb))
+    timer:start(0, 5000, vim.schedule_wrap(config.render))
+   
 end
+
+_M.create_popup = create_popup
 
 return _M
