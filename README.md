@@ -10,7 +10,7 @@ Docker management right inside Neovim!
 
 - Container management
   - View containers on your local machine with live reloading
-  - Bring containers up/down (Soon<sup>TM</sup>)
+  - Bring containers up/down
   - Remove and rebuild containers (Soon <sup>TM</sup>)
   - Send commands to containers (Soon<sup>TM</sup>)
   - View container logs (Soon<sup>TM</sup>)
@@ -49,8 +49,8 @@ Once the popup is launched, use `<j>` and `<k>` keys to move up and down. `<l>` 
 ## Roadmap
 
 - [ ] Interact with containers
-  - [ ] Start container
-  - [ ] Stop container
+  - [x] Start container [12c8e6](https://github.com/dgrbrady/nvim-docker/commit/12c8e625a7f3864f89e11f0d24297a5ce1f09542)
+  - [x] Stop container [12c8e6](https://github.com/dgrbrady/nvim-docker/commit/12c8e625a7f3864f89e11f0d24297a5ce1f09542)
   - [ ] Restart container
   - [ ] Delete container
   - [ ] View logs from container
