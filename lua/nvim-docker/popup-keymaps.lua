@@ -1,5 +1,3 @@
-local Popup = require('nui.popup')
-local event = require('nui.utils.autocmd').event
 local _M = {}
 
 -- local help_popup = Popup({
@@ -42,6 +40,28 @@ function _M.create_keymaps(popup, config, state, tree_instance, tree_mod)
     --     end)
     -- end)
 
+    -- popup:map('n', '?', function ()
+    --     -- if help_opened == nil then
+    --         popup:off(event.BufLeave)
+    --         popup:update_layout({
+    --             size = {
+    --                 width = '30%',
+    --                 height = '60%'
+    --             },
+    --             position = {
+    --                 row = '50%',
+    --                 col = '0%'
+    --             }
+    --         })
+    --         help_popup:mount()
+    --         if config.extra_keymaps ~= nil then
+    --             for index, keymap in ipairs(config.extra_keymaps) do
+    --                 vim.api.nvim_buf_set_lines(help_popup.bufnr, index, index + 1, false, {'[Key]: ' .. keymap[2] .. '      ' .. keymap[4]})
+    --             end
+    --         end
+    -- end)
+
+
     -- collapse
     popup:map('n', 'h', function()
         local node, linenr = tree_instance:get_node()
@@ -80,33 +100,12 @@ function _M.create_keymaps(popup, config, state, tree_instance, tree_mod)
         tree_mod.expand_all_nodes(tree_instance)
     end, map_options)
 
-    -- popup:map('n', '?', function ()
-    --     -- if help_opened == nil then
-    --         popup:off(event.BufLeave)
-    --         popup:update_layout({
-    --             size = {
-    --                 width = '30%',
-    --                 height = '60%'
-    --             },
-    --             position = {
-    --                 row = '50%',
-    --                 col = '0%'
-    --             }
-    --         })
-    --         help_popup:mount()
-    --         if config.extra_keymaps ~= nil then
-    --             for index, keymap in ipairs(config.extra_keymaps) do
-    --                 vim.api.nvim_buf_set_lines(help_popup.bufnr, index, index + 1, false, {'[Key]: ' .. keymap[2] .. '      ' .. keymap[4]})
-    --             end
-    --         end
-    -- end)
-
     if config.extra_keymaps ~= nil then
         for _, keymap in ipairs(config.extra_keymaps) do
             popup:map(
                 keymap[1],
                 keymap[2],
-                keymap[3],
+                function () keymap[3](config) end,
                 map_options
             )
         end

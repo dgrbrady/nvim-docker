@@ -1,26 +1,22 @@
+local NuiTree = require('nui.tree')
+
 local popup = require('nvim-docker.popup')
 local state = require('nvim-docker.popup-state')
 local tree = require('nvim-docker.tree')
-
-local NuiTree = require('nui.tree')
-local Job = require('plenary.job')
+local extra_keymaps = require('nvim-docker.container-keymaps').extra_keymaps
+local utils = require('nvim-docker.utils')
 
 local _M = {}
 
-local popup_top_text = 'Docker Containers'
-local popup_bottom_text = '<l>: Expand, <L>: Expand All, <h>: Collapse, <H>: Collapse All, <u>: Container UP, <d>: Container DOWN'
-local extra_keymaps = require('nvim-docker.container-keymaps').extra_keymaps
+_M.popup_top_text = 'Docker Containers'
 
-local function get_containers()
+function _M.get_containers()
     local containers = {}
-    local result = Job:new({
-        command = 'docker',
-        args = {
-            'container',
-            'ls',
-            '-a',
-            '--format={"id": {{json .ID}}, "name": {{json .Names}}, "image": {{json .Image}}, "command": {{json .Command}}, "status": {{json .Status}}, "networks": {{json .Networks}}, "ports": {{json .Ports}}}'
-        },
+    local result = utils.docker({
+        'container',
+        'ls',
+        '-a',
+        '--format={"id": {{json .ID}}, "name": {{json .Names}}, "image": {{json .Image}}, "command": {{json .Command}}, "status": {{json .Status}}, "networks": {{json .Networks}}, "ports": {{json .Ports}}}'
     }):sync()
 
     if result ~= nil then
@@ -34,11 +30,11 @@ local function get_containers()
     return containers
 end
 
-local function render_containers(containers)
+function _M.render_containers(containers)
     local function render(p)
         local old_nodes = state.tree:get_nodes()
         tree.create_tree(p, {
-            top_text = popup_top_text,
+            top_text = _M.popup_top_text,
             extra_keymaps = extra_keymaps,
             render = function (pop) render(pop) end
         })
@@ -74,7 +70,7 @@ local function render_containers(containers)
 
     if state.popup == nil then
         popup.create_popup({
-            top_text = popup_top_text,
+            top_text = _M.popup_top_text,
             extra_keymaps = extra_keymaps,
             render = function (p) render(p) end
         })
@@ -83,26 +79,16 @@ local function render_containers(containers)
     end
 end
 
-
-
 function _M.list_containers()
     if state.popup == nil then
         popup.create_popup({
-            top_text = popup_top_text,
+            top_text = _M.popup_top_text,
             extra_keymaps = extra_keymaps,
             render = function ()
-                local containers = get_containers()
-                render_containers(containers)
+                local containers = _M.get_containers()
+                _M.render_containers(containers)
             end
         })
-        -- popup.create_popup(
-        --     popup_top_text,
-        --     extra_keymaps,
-        --     function ()
-        --         local containers = get_containers()
-        --         render_containers(containers)
-        --     end
-        -- )
     end
 end
 
