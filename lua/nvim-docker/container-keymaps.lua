@@ -4,6 +4,7 @@ local Popup = require('nui.popup')
 local state = require('nvim-docker.popup-state')
 local utils = require('nvim-docker.utils')
 local create_popup = require('nvim-docker.popup').create_popup
+local follow_logs = require('nvim-docker.container-logs')
 
 local _M = {}
 
@@ -86,14 +87,43 @@ local function view_logs(popup_config)
     })
 
     table.insert(state.extra_popups, log_popup)
-    local main_box = Layout.Box(state.popup, {size = '50%'})
+    local main_box = Layout.Box(state.popup, {size = '30%'})
     local other_boxes = {
-      Layout.Box(log_popup, {size = '50%'})
+      Layout.Box(log_popup, {size = '70%'})
     }
 
-    create_layout(main_box, other_boxes)
+    create_layout(main_box, other_boxes, 'col')
     result.create_timer()
     result.create_tree(result.popup, popup_config, state)
+
+    local logs = utils.docker({'logs', node.container.name}):sync()
+    for index, log in ipairs(logs) do
+      vim.api.nvim_buf_set_lines(log_popup.bufnr, index, index + 1, false, {log})
+    end
+    -- local job = utils.docker({'logs', '--follow', node.container.name }, {
+    --   on_stdout = function (_, log)
+    --     print('[STD_OUT]', log)
+    --     set_popup_lines(log_popup.bufnr, '[STD_OUT]: ' .. log)
+    --   end,
+    --   on_stderr = function (_, log)
+    --     set_popup_lines(log_popup.bufnr, '[STD_ERR]: ' .. log)
+    --   end
+    -- }):start()
+
+    
+    -- vim.keymap.set(
+    --   'n',
+    --   'T',
+    --   function ()
+    --     job:shutdown()
+    --   end,
+    --   {buffer= state.popup.bufnr,
+    --   nowait = true, noremap = true, silent = true}
+    -- )
+    -- print(vim.pretty_print(vim.inspect(logs)))
+    -- for index, log in ipairs(logs) do
+    --   set_popup_lines(log_popup.bufnr, log)
+    -- end
   end
 end
 
