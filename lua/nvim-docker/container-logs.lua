@@ -1,8 +1,6 @@
 local rx = require('reactivex')
 local docker = require('nvim-docker.utils').docker
 
-local timers = {}
-
 local _M = {
   _timer = nil,
   _logs_subscription = nil
@@ -25,15 +23,6 @@ end
 function _M.teardown()
   reset_timer()
   reset_logs_subscription()
-end
-
-function _M.cleanup_timer(container_name)
-  print('cleanup_timer: ', container_name)
-  local container_timer = timers[container_name]
-  if container_timer ~= nil then
-    container_timer:close()
-    timers[container_name] = nil
-  end
 end
 
 function _M.follow_logs(container_name, cb)
