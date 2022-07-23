@@ -6,6 +6,7 @@ end
 local event = require('nui.utils.autocmd').event
 local state = require('nvim-docker.popup-state')
 local tree = require('nvim-docker.tree')
+local teardown_logs = require('nvim-docker.container-logs').teardown
 
 local _M = {}
 
@@ -40,6 +41,7 @@ local function create_popup(config)
         popup:on(event.BufLeave, function()
             state.popup = nil
             state.tree = nil
+            teardown_logs()
             local function unmount()
                 timer:close()
                 popup:unmount()

@@ -4,7 +4,7 @@ local Popup = require('nui.popup')
 local state = require('nvim-docker.popup-state')
 local utils = require('nvim-docker.utils')
 local create_popup = require('nvim-docker.popup').create_popup
-local follow_logs = require('nvim-docker.container-logs')
+local container_logs = require('nvim-docker.container-logs')
 
 local _M = {}
 
@@ -59,7 +59,7 @@ local function view_logs(popup_config)
     local create_layout = require('nvim-docker.layout').create_layout
     state.popup:unmount()
 
-    local result = create_popup({
+    local main_popup = create_popup({
       mount = false,
       top_text = container_lib.popup_top_text,
       extra_keymaps = {
@@ -74,7 +74,7 @@ local function view_logs(popup_config)
         container_lib.render_containers(containers)
       end
     })
-    state.popup = result.popup
+    state.popup = main_popup.popup
 
     local log_popup = Popup({
       border = {
@@ -93,37 +93,16 @@ local function view_logs(popup_config)
     }
 
     create_layout(main_box, other_boxes, 'col')
-    result.create_timer()
-    result.create_tree(result.popup, popup_config, state)
+    main_popup.create_timer()
+    main_popup.create_tree(main_popup.popup, popup_config, state)
 
-    local logs = utils.docker({'logs', node.container.name}):sync()
-    for index, log in ipairs(logs) do
-      vim.api.nvim_buf_set_lines(log_popup.bufnr, index, index + 1, false, {log})
-    end
-    -- local job = utils.docker({'logs', '--follow', node.container.name }, {
-    --   on_stdout = function (_, log)
-    --     print('[STD_OUT]', log)
-    --     set_popup_lines(log_popup.bufnr, '[STD_OUT]: ' .. log)
-    --   end,
-    --   on_stderr = function (_, log)
-    --     set_popup_lines(log_popup.bufnr, '[STD_ERR]: ' .. log)
-    --   end
-    -- }):start()
-
-    
-    -- vim.keymap.set(
-    --   'n',
-    --   'T',
-    --   function ()
-    --     job:shutdown()
-    --   end,
-    --   {buffer= state.popup.bufnr,
-    --   nowait = true, noremap = true, silent = true}
-    -- )
-    -- print(vim.pretty_print(vim.inspect(logs)))
-    -- for index, log in ipairs(logs) do
-    --   set_popup_lines(log_popup.bufnr, log)
-    -- end
+    container_logs.follow_logs(node.container.name, function (logs)
+      if log_popup.bufnr ~= nil then
+        for index, log in ipairs(logs) do
+          vim.api.nvim_buf_set_lines(log_popup.bufnr, index, index + 1, false, {log})
+        end
+      end
+    end)
   end
 end
 
