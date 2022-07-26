@@ -18,7 +18,7 @@ local _M = {}
 -- })
 
 function _M.create_keymaps(popup, extra_keymaps, tree, layout)
-    local tree_utils = require('nvim-docker.tree')
+    local tree_utils = require('nvim-docker.tree-utils')
     local map_options = { remap = false, nowait = true }
 
     -- help_popup:map('n', '?', function ()

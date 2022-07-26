@@ -4,9 +4,9 @@ local Popup = require('nui.popup')
 local event = require('nui.utils.autocmd').event
 
 local popup_keymaps = require('nvim-docker.popup-keymaps')
-local tree_utils = require('nvim-docker.tree')
+local tree_utils = require('nvim-docker.tree-utils')
 local ContainerLayout = Layout:extend('ContainerLayout')
-local docker = require('nvim-docker.utils').docker
+local docker = require('nvim-docker.docker')
 
 ---Component used to for managing containers
 ---@param layout_options table https://github.com/MunifTanjim/nui.nvim/tree/main/lua/nui/layout#options

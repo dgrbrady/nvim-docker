@@ -1,5 +1,5 @@
 local rx = require('reactivex')
-local docker = require('nvim-docker.utils').docker
+local docker = require('nvim-docker.docker')
 
 local _M = {
   _timer = nil,

@@ -1,5 +1,5 @@
 local event = require('nui.utils.autocmd').event
-local utils = require('nvim-docker.utils')
+local docker = require('nvim-docker.docker')
 local container_logs = require('nvim-docker.container-logs')
 
 local _M = {}
@@ -9,7 +9,7 @@ local function start_container(params)
   local node, _ = params.tree:get_node()
   if node ~= nil and node.container ~= nil then
     vim.notify('Starting container: ' .. node.container.name)
-    utils.docker({'container', 'start', node.container.id}):start()
+    docker({'container', 'start', node.container.id}):start()
   end
 end
 
@@ -18,7 +18,7 @@ local function stop_container(params)
   local node, _ = params.tree:get_node()
   if node ~= nil and node.container ~= nil then
     vim.notify('Stopping container: ' .. node.container.name)
-    utils.docker({'container', 'stop', node.container.id}):start()
+    docker({'container', 'stop', node.container.id}):start()
   end
 end
 
@@ -27,7 +27,7 @@ local function restart_container(params)
   local node, _ = params.tree:get_node()
   if node ~= nil and node.container ~= nil then
     vim.notify('Restarting container: ' .. node.container.name)
-    utils.docker({'container', 'restart', node.container.id}):start()
+    docker({'container', 'restart', node.container.id}):start()
   end
 end
 
@@ -40,7 +40,7 @@ local function delete_container(params)
     }, function (choice)
       if choice == 'Yes' then
         vim.notify('Deleting container: ' .. node.container.name)
-        utils.docker({'container', 'rm', node.container.id}):start()
+        docker({'container', 'rm', node.container.id}):start()
       end
     end)
   end
