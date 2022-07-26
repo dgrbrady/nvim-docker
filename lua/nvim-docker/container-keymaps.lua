@@ -1,16 +1,12 @@
-local Layout = require('nui.layout')
-local Popup = require('nui.popup')
-
-local state = require('nvim-docker.popup-state')
+local event = require('nui.utils.autocmd').event
 local utils = require('nvim-docker.utils')
-local create_popup = require('nvim-docker.popup').create_popup
 local container_logs = require('nvim-docker.container-logs')
 
 local _M = {}
 
 -- starts the container associated with the current tree node
-local function start_container()
-  local node, _ = state.tree:get_node()
+local function start_container(params)
+  local node, _ = params.tree:get_node()
   if node ~= nil and node.container ~= nil then
     vim.notify('Starting container: ' .. node.container.name)
     utils.docker({'container', 'start', node.container.id}):start()
@@ -18,8 +14,8 @@ local function start_container()
 end
 
 -- stops the container associated with the current tree node
-local function stop_container()
-  local node, _ = state.tree:get_node()
+local function stop_container(params)
+  local node, _ = params.tree:get_node()
   if node ~= nil and node.container ~= nil then
     vim.notify('Stopping container: ' .. node.container.name)
     utils.docker({'container', 'stop', node.container.id}):start()
@@ -27,8 +23,8 @@ local function stop_container()
 end
 
 -- restarts the container associated with the current tree node
-local function restart_container()
-  local node, _ = state.tree:get_node()
+local function restart_container(params)
+  local node, _ = params.tree:get_node()
   if node ~= nil and node.container ~= nil then
     vim.notify('Restarting container: ' .. node.container.name)
     utils.docker({'container', 'restart', node.container.id}):start()
@@ -36,8 +32,8 @@ local function restart_container()
 end
 
 -- deletes the container associated with the current tree node
-local function delete_container()
-  local node, _ = state.tree:get_node()
+local function delete_container(params)
+  local node, _ = params.tree:get_node()
   if node ~= nil and node.container ~= nil then
     vim.ui.select({'Yes', 'No'},{
       prompt = 'Delete ' .. node.container.name .. '[y/n]?',
@@ -50,52 +46,23 @@ local function delete_container()
   end
 end
 
--- TODO finish implementation
 -- view logs of the container associated with the current tree node
-local function view_logs(popup_config)
-  local node, _ = state.tree:get_node()
+local function view_logs(params)
+  local node, _ = params.tree:get_node()
   if node ~= nil and node.container ~= nil then
-    local container_lib = require('nvim-docker.containers')
-    local create_layout = require('nvim-docker.layout').create_layout
-    state.popup:unmount()
+      local layout = params.layout
 
-    local main_popup = create_popup({
-      mount = false,
-      top_text = container_lib.popup_top_text,
-      extra_keymaps = {
-        {'n', 'u', start_container, 'Start the highlighted container'},
-        {'n', 'd', stop_container, 'Stop the highlighted container'},
-        {'n', 'r', restart_container, 'Restart the highlighted container'},
-        {'n', 'dd', delete_container, 'Delete the highlighted container'},
-        {'n', 't', view_logs, 'View container logs'},
-      },
-      render = function ()
-        local containers = container_lib.get_containers()
-        container_lib.render_containers(containers)
-      end
-    })
-    state.popup = main_popup.popup
+    vim.keymap.set('n', '<Tab>', function ()
+      layout.main_popup:off(event.BufLeave)
+      vim.api.nvim_set_current_win(layout.log_popup.winid)
+    end, {buffer = layout.main_popup.bufnr})
 
-    local log_popup = Popup({
-      border = {
-        text = {
-          top = node.container.name .. 'Logs',
-          top_align = 'center',
-        },
-        style = 'double'
-      },
-    })
+    vim.keymap.set('n', '<S-Tab>', function ()
+      vim.api.nvim_set_current_win(layout.main_popup.winid)
+      layout:_setup_main_popup_on_bufleave()
+    end, {buffer = layout.log_popup.bufnr})
 
-    table.insert(state.extra_popups, log_popup)
-    local main_box = Layout.Box(state.popup, {size = '30%'})
-    local other_boxes = {
-      Layout.Box(log_popup, {size = '70%'})
-    }
-
-    create_layout(main_box, other_boxes, 'col')
-    main_popup.create_timer()
-    main_popup.create_tree(main_popup.popup, popup_config, state)
-
+    local log_popup = params.layout.log_popup
     container_logs.follow_logs(node.container.name, function (logs)
       if log_popup.bufnr ~= nil then
         for index, log in ipairs(logs) do
