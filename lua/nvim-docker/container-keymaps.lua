@@ -50,24 +50,58 @@ end
 local function view_logs(params)
   local node, _ = params.tree:get_node()
   if node ~= nil and node.container ~= nil then
-      local layout = params.layout
+    local layout = params.layout
+    local log_popup = layout.log_popup
+    local log_bufnr = log_popup.bufnr
+    log_popup.border:set_text('top', node.container.name .. ' Logs', 'center')
+    local line_count = vim.api.nvim_buf_line_count(log_bufnr)
+    vim.api.nvim_buf_set_lines(log_bufnr, 0, line_count, false, {})
+    local cursor_follow_logs = false
 
-    vim.keymap.set('n', '<Tab>', function ()
+
+    local function toggle_cursor_follow_logs()
+      cursor_follow_logs = not cursor_follow_logs
+      if cursor_follow_logs == true then
+        log_popup.border:set_text('bottom', '[stuck to bottom]', 'center')
+      else
+        log_popup.border:set_text('bottom', '')
+      end
+    end
+
+    local function focus_logs()
       layout.main_popup:off(event.BufLeave)
       vim.api.nvim_set_current_win(layout.log_popup.winid)
-    end, {buffer = layout.main_popup.bufnr})
+      layout:_setup_main_popup_on_bufleave()
+      vim.keymap.set('n', 't', toggle_cursor_follow_logs, {buffer = log_bufnr})
+    end
 
-    vim.keymap.set('n', '<S-Tab>', function ()
+    local function focus_main()
+      cursor_follow_logs = false
       vim.api.nvim_set_current_win(layout.main_popup.winid)
       layout:_setup_main_popup_on_bufleave()
-    end, {buffer = layout.log_popup.bufnr})
+      vim.keymap.del('n', 't', {buffer=log_bufnr})
+    end
 
-    local log_popup = params.layout.log_popup
+
+    vim.keymap.set('n', '<Tab>', focus_logs, {buffer = layout.main_popup.bufnr})
+
+    vim.keymap.set('n', '<S-Tab>', focus_main, {buffer = log_bufnr})
+
+    focus_logs()
+
     container_logs.follow_logs(node.container.name, function (logs)
       if log_popup.bufnr ~= nil then
         for index, log in ipairs(logs) do
           vim.api.nvim_buf_set_lines(log_popup.bufnr, index, index + 1, false, {log})
         end
+        vim.schedule(function ()
+          if cursor_follow_logs == true then
+            vim.api.nvim_win_set_cursor(log_popup.winid, {
+              vim.api.nvim_buf_line_count(log_bufnr),
+              0
+            })
+          end
+        end)
       end
     end)
   end

@@ -2,6 +2,7 @@ local Layout = require('nui.layout')
 local Tree = require('nui.tree')
 local Popup = require('nui.popup')
 local event = require('nui.utils.autocmd').event
+local rx = require('reactivex')
 
 local popup_keymaps = require('nvim-docker.popup-keymaps')
 local tree_utils = require('nvim-docker.tree-utils')
@@ -13,6 +14,7 @@ local docker = require('nvim-docker.docker')
 function ContainerLayout:init(layout_options, keymaps)
   self.mounted = false
   self.keymaps = keymaps
+  self._containers = rx.Subject.create()
   local options = vim.tbl_deep_extend('force', layout_options or {}, {
     position = '50%',
     relative = 'editor',
@@ -28,7 +30,6 @@ function ContainerLayout:init(layout_options, keymaps)
     Layout.Box(self.main_popup, {size='50%'}),
     Layout.Box(self.log_popup, {size='50%'}),
   }, {dir = 'col'}))
-  self.log_popup:hide()
 end
 
 function ContainerLayout:_setup_main_popup_on_bufleave()
@@ -36,24 +37,27 @@ function ContainerLayout:_setup_main_popup_on_bufleave()
     local container_logs = require('nvim-docker.container-logs')
     container_logs.teardown()
     self.main_popup:unmount()
-    self.main_popup_timer:close()
+    local function close_timer()
+      self.main_popup_timer:close()
+    end
+    pcall(close_timer)
     self:unmount()
   end)
 end
 
 function ContainerLayout:_create_main_popup()
   self.main_popup = Popup({
-        enter = true,
-        focusable = true,
-        border = {
-            style = 'rounded',
-            text = {
-                top = 'Docker Containers',
-                top_align = 'center',
-                bottom = '<l>: Expand, <L>: Expand All, <h>: Collapse, <H>: Collapse All'
-            },
-        },
-    })
+    enter = true,
+    focusable = true,
+    border = {
+      style = 'rounded',
+      text = {
+        top = 'Docker Containers',
+        top_align = 'center',
+        bottom = '<l>: Expand, <L>: Expand All, <h>: Collapse, <H>: Collapse All'
+      },
+    },
+  })
 end
 
 function ContainerLayout:_create_log_popup()
@@ -69,23 +73,27 @@ function ContainerLayout:_create_log_popup()
 end
 
 function ContainerLayout:get_containers()
-    local containers = {}
-    local result = docker({
+    docker({
         'container',
         'ls',
         '-a',
         '--format={"id": {{json .ID}}, "name": {{json .Names}}, "image": {{json .Image}}, "command": {{json .Command}}, "status": {{json .Status}}, "networks": {{json .Networks}}, "ports": {{json .Ports}}}'
-    }):sync()
-
-    if result ~= nil then
-        for _, value in ipairs(result) do
+    }, {
+      on_exit = function (j)
+        local result = j:result()
+        if result ~= nil then
+          local containers = {}
+          for _, value in ipairs(result) do
             if value ~= nil then
-                local container = vim.json.decode(value)
-                table.insert(containers, container)
+              local container = vim.json.decode(value)
+              table.insert(containers, container)
             end
+          end
+          self._containers(containers)
         end
-    end
-    return containers
+      end
+    }):start()
+    return self._containers
 end
 
 function ContainerLayout:_render_containers(containers)
@@ -119,7 +127,9 @@ function ContainerLayout:_render_containers(containers)
         end
       end
     end
-    self.tree:render()
+    vim.schedule(function ()
+      self.tree:render()
+    end)
 end
 
 function ContainerLayout:show_containers()
@@ -132,8 +142,9 @@ function ContainerLayout:show_containers()
   end
   self.main_popup_timer = vim.loop.new_timer()
   self.main_popup_timer:start(0, 5000, vim.schedule_wrap(function ()
-    local containers = self:get_containers()
-    self:_render_containers(containers)
+    self:get_containers():subscribe(vim.schedule_wrap(function (containers)
+      self:_render_containers(containers)
+    end))
   end))
 end
 

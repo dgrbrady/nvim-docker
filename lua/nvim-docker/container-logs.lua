@@ -36,8 +36,13 @@ function _M.follow_logs(container_name, cb)
     -- FORMAT: yyyy-mm-ddThh:mm:ssZ
     local start_from = os.date('%Y-%m-%dT%H:%M:%SZ')
     print('container_name: ' .. container_name .. 'time: ' .. start_from)
-    local logs = docker({'logs', container_name, '--since', start_from}):sync()
-    logs_stream(logs)
+    docker(
+      {'logs', '--since', start_from, container_name },
+      {
+        on_exit = vim.schedule_wrap(function (job)
+          logs_stream(job:result())
+        end)
+      }):start()
   end))
 end
 
