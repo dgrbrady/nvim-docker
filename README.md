@@ -46,7 +46,23 @@ In your lua config:
   vim.keymap.set('n', '<leader>C', nvim_docker.containers.list_containers)
 ```
 
-Once the popup is launched, use `<j>` and `<k>` keys to move up and down. `<l>` to expand a node and `<h>` to collapse a node. `<L>` and `<H>` will expand and collapse all nodes, respectively.
+### Default Keymaps
+
+| Binding | Where | Effect |
+| ------- | ----- | ------ |
+| `j`     | Top popup | Move cursor down on container list |
+| `k`     | Top popup | Move cursor up on container list |
+| `l`     | Top popup | Expand container details |
+| `L`     | Top popup | Expand all containers |
+| `h`     | Top popup | Collapse container details |
+| `H`     | Top popup | Collapse all containers |
+| `r`     | Top popup | Restart container |
+| `dd`    | Top popup | Deletes container (asks for confirmation) |
+| `t`     | Top popup | View container logs |
+| `<Tab>` | Top popup | Focus bottom popup |
+| `t`     | Bottom popup | Toggles whether the cursor should be stuck to the bottom of the popup. Helpful if you want to watch the latest logs as they come in |
+| `<S-Tab>` | Bottom popup | Focus top popup |
+
 
 ## Roadmap
 
