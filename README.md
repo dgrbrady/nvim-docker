@@ -11,9 +11,9 @@ Docker management right inside Neovim!
 - Container management
   - View containers on your local machine with live reloading
   - Bring containers up/down
-  - Remove and rebuild containers (Soon <sup>TM</sup>)
+  - Remove and rebuild containers
   - Send commands to containers (Soon<sup>TM</sup>)
-  - View container logs (Soon<sup>TM</sup>)
+  - View container logs
 - Configurable (Soon<sup>TM</sup>)
 - Docker compose integration (Soon<sup>TM</sup>)
 - Image management
@@ -22,13 +22,15 @@ Docker management right inside Neovim!
   
 ## Installation
 
-### Prerequisites
-
-This plugin uses plenary and nui.nvim, so make sure those are installed first!
-
 ### Packer
 
-`use 'dgrbrady/nvim-docker'`
+```lua
+use {
+  'dgrbrady/nvim-docker',
+  requires = {'nvim-lua/plenary.nvim', 'MunifTanjim/nui.nvim'},
+  rocks = '4O4/reactivex' -- ReactiveX Lua implementation
+}
+```
 
 ## How to use
 
@@ -51,9 +53,9 @@ Once the popup is launched, use `<j>` and `<k>` keys to move up and down. `<l>` 
 - [ ] Interact with containers
   - [x] Start container [12c8e6](https://github.com/dgrbrady/nvim-docker/commit/12c8e625a7f3864f89e11f0d24297a5ce1f09542)
   - [x] Stop container [12c8e6](https://github.com/dgrbrady/nvim-docker/commit/12c8e625a7f3864f89e11f0d24297a5ce1f09542)
-  - [ ] Restart container
-  - [ ] Delete container
-  - [ ] View logs from container
+  - [x] Restart container [39a1be](https://github.com/dgrbrady/nvim-docker/commit/39a1be419e7b6817bd9dd5474c1a2dd80790934b)
+  - [x] Delete container [98b561](https://github.com/dgrbrady/nvim-docker/commit/98b5611fd81aca130f13d2bd319fa49a7a2f8ee5)
+  - [x] View logs from container [c71005](https://github.com/dgrbrady/nvim-docker/commit/c71005aba5cc70fea33338cdcb50620e4fe2de8f)
   - [ ] Run command in container
 - [ ] Interact with images
   - [ ] List image
