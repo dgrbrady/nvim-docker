@@ -22,13 +22,27 @@ Docker management right inside Neovim!
   
 ## Installation
 
-### Packer
+### Using [`rocks.nvim`](https://github.com/nvim-neorocks/rocks.nvim)
+
+```vimscript
+:Rocks install nvim-docker
+```
+
+### [`lazy.nvim`](https://github.com/folke/lazy.nvim)
 
 ```lua
-use {
+{
   'dgrbrady/nvim-docker',
-  requires = {'nvim-lua/plenary.nvim', 'MunifTanjim/nui.nvim'},
-  rocks = '4O4/reactivex' -- ReactiveX Lua implementation
+  dependencies = {
+    'nvim-lua/plenary.nvim',
+    'MunifTanjim/nui.nvim',
+    { 
+      '4O4/reactivex',
+      build = function(plugin)
+        vim.uv.fs_symlink(plugin.dir, plugin.dir .. "/lua", { dir = true })
+      end,
+    },
+  },
 }
 ```
 
